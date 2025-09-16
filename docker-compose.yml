@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  app:
+    build: .
+    ports:
+      - "5000:5000"
+    environment:
+      SECRET_KEY: your_secret_key_here
+      DB_HOST: db
+      DB_USER: cbd_user
+      DB_PASS: WINDOW5-BABI
+      DB_NAME: bl1tz_store
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    command: ["sh", "-c", "python wait_for_db.py && python app.py"]
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_here
+      MYSQL_DATABASE: bl1tz_store
+      MYSQL_USER: cbd_user
+      MYSQL_PASSWORD: WINDOW5-BABI
+    volumes:
+      - ./setup.sql:/docker-entrypoint-initdb.d/setup.sql
+      - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "mysqladmin",
+          "ping",
+          "-h",
+          "localhost",
+          "-u",
+          "root",
+          "-proot_password_here",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:

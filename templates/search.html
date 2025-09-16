@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+
+{% block title %}Search Results - bl1tz Store{% endblock %}
+
+{% block content %}
+<!-- Search Header -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-5 fw-bold text-center mb-4">Search Results</h1>
+                
+                <!-- Search Form -->
+                <div class="card">
+                    <div class="card-body">
+                        <form action="{{ url_for('main.search') }}" method="GET">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <input type="text" name="q" class="form-control" 
+                                           placeholder="Search for products..." 
+                                           value="{{ query|xss_safe }}">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="category" class="form-select">
+                                        <option value="">All Categories</option>
+                                        {% for cat in categories %}
+                                        <option value="{{ cat.name }}" 
+                                                {% if category == cat.name %}selected{% endif %}>
+                                            {{ cat.name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                {% if query %}
+                <div class="mt-4">
+                    <!-- XSS Protection: Using custom filter instead of |safe -->
+                    <div class="alert alert-info">
+                        <h5><i class="fas fa-search"></i> Search Results</h5>
+                        <p>You searched for: <strong>{{ query|xss_safe }}</strong></p>
+                        {% if category %}
+                        <p>In category: <strong>{{ category|xss_safe }}</strong></p>
+                        {% endif %}
+                        <p>Found {{ products|length }} product(s)</p>
+                    </div>
+                    
+                    <!-- XSS Protection: Removed secondary reflection point as it's unnecessary -->
+                    <!-- If you need to show the processed query, use the safe filter -->
+                    {% if query|length > 0 %}
+                    <div class="alert alert-secondary">
+                        <small>Search query: {{ query|xss_safe }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results -->
+<section class="py-5">
+    <div class="container">
+        {% if query and products %}
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card product-card h-100">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        {% if product.category == 'Electronics' %}
+                            <i class="fas fa-laptop text-primary" style="font-size: 60px;"></i>
+                        {% elif product.category == 'Fashion' %}
+                            <i class="fas fa-tshirt text-success" style="font-size: 60px;"></i>
+                        {% elif product.category == 'Home & Garden' %}
+                            <i class="fas fa-home text-warning" style="font-size: 60px;"></i>
+                        {% elif product.category == 'Sports' %}
+                            <i class="fas fa-running text-danger" style="font-size: 60px;"></i>
+                        {% elif product.category == 'Books' %}
+                            <i class="fas fa-book text-info" style="font-size: 60px;"></i>
+                        {% else %}
+                            <i class="fas fa-box text-secondary" style="font-size: 60px;"></i>
+                        {% endif %}
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ product.description }}</p>
+                        <div class="mb-2">
+                            <span class="badge bg-secondary">{{ product.category }}</span>
+                            <span class="badge bg-info">{{ product.stock }} in stock</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                            <button class="btn btn-primary btn-sm">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% elif query %}
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h3>No products found</h3>
+            <!-- XSS Protection: Using safe filter -->
+            <p class="text-muted">Sorry, we couldn't find any products matching your search: <strong>{{ query|xss_safe }}</strong></p>
+            <p>Try different keywords or browse our <a href="{{ url_for('main.products') }}">all products</a> page.</p>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-search fa-3x text-muted mb-3"></i>
+            <h3>Start Your Search</h3>
+            <p class="text-muted">Enter a search term above to find products.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Search Tips -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h3 class="text-center mb-4">Search Tips</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-lightbulb fa-2x text-warning mb-3"></i>
+                                <h5>Better Search Results</h5>
+                                <p>Use specific keywords like brand names, model numbers, or product features for more accurate results.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="fas fa-filter fa-2x text-primary mb-3"></i>
+                                <h5>Use Filters</h5>
+                                <p>Select a category to narrow down your search and find exactly what you're looking for.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

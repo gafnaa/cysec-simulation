@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard - bl1tz Store{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-cogs"></i> Admin Dashboard
+                    <span class="badge bg-danger">Administrator</span>
+                </h1>
+            </div>
+        </div>
+        
+        <!-- Statistics Cards -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="card border-primary">
+                    <div class="card-body text-center">
+                        <i class="fas fa-users fa-2x text-primary mb-3"></i>
+                        <h3>{{ stats.total_users }}</h3>
+                        <p class="text-muted">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-success">
+                    <div class="card-body text-center">
+                        <i class="fas fa-box fa-2x text-success mb-3"></i>
+                        <h3>{{ stats.total_products }}</h3>
+                        <p class="text-muted">Products</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-info">
+                    <div class="card-body text-center">
+                        <i class="fas fa-newspaper fa-2x text-info mb-3"></i>
+                        <h3>{{ stats.total_news }}</h3>
+                        <p class="text-muted">News Articles</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-warning">
+                    <div class="card-body text-center">
+                        <i class="fas fa-file fa-2x text-warning mb-3"></i>
+                        <h3>{{ stats.total_uploads }}</h3>
+                        <p class="text-muted">File Uploads</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Management -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3>Quick Management</h3>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                                <h5>Manage Users</h5>
+                                <p class="text-muted">View and manage user accounts</p>
+                                <a href="{{ url_for('admin.users') }}" class="btn btn-primary">
+                                    View Users
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-box fa-3x text-success mb-3"></i>
+                                <h5>Manage Products</h5>
+                                <p class="text-muted">Add, edit, and remove products</p>
+                                <a href="{{ url_for('admin.products') }}" class="btn btn-success">
+                                    View Products
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file fa-3x text-warning mb-3"></i>
+                                <h5>File Uploads</h5>
+                                <p class="text-muted">Monitor uploaded files</p>
+                                <a href="{{ url_for('admin.uploads') }}" class="btn btn-warning">
+                                    View Uploads
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-newspaper fa-3x text-info mb-3"></i>
+                                <h5>Manage News</h5>
+                                <p class="text-muted">Create and edit news articles</p>
+                                <a href="{{ url_for('admin.news') }}" class="btn btn-info">
+                                    View News
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Activity -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user-plus"></i> Recent Users</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_users %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Username</th>
+                                        <th>Full Name</th>
+                                        <th>Role</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in recent_users %}
+                                    <tr>
+                                        <td>{{ user.username }}</td>
+                                        <td>{{ user.full_name }}</td>
+                                        <td>
+                                            <span class="badge bg-{% if user.role == 'admin' %}danger{% else %}success{% endif %}">
+                                                {{ user.role|title }}
+                                            </span>
+                                        </td>
+                                        <td>{{ user.created_at.strftime('%m/%d/%Y') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center">No recent users</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-upload"></i> Recent Uploads</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_uploads %}
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>File</th>
+                                        <th>User</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for upload in recent_uploads %}
+                                    <tr>
+                                        <td>
+                                            <i class="fas fa-file-pdf text-danger"></i>
+                                            {{ upload.original_filename[:20] }}{% if upload.original_filename|length > 20 %}...{% endif %}
+                                        </td>
+                                        <td>{{ upload.user_name }}</td>
+                                        <td>{{ upload.upload_time.strftime('%m/%d/%Y') }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <p class="text-muted text-center">No recent uploads</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

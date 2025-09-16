@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - bl1tz Store{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="display-5 fw-bold mb-4">
+                    <i class="fas fa-tachometer-alt"></i> Welcome, {{ current_user.full_name }}!
+                </h1>
+            </div>
+        </div>
+        
+        <!-- User Stats -->
+        <div class="row mb-5">
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-shopping-cart fa-2x text-primary mb-3"></i>
+                        <h4>0</h4>
+                        <p class="text-muted">Items in Cart</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-box fa-2x text-success mb-3"></i>
+                        <h4>0</h4>
+                        <p class="text-muted">Orders</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-heart fa-2x text-danger mb-3"></i>
+                        <h4>0</h4>
+                        <p class="text-muted">Wishlist Items</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <i class="fas fa-star fa-2x text-warning mb-3"></i>
+                        <h4>0</h4>
+                        <p class="text-muted">Reviews</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3>Quick Actions</h3>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-shopping-bag fa-3x text-primary mb-3"></i>
+                                <h5>Continue Shopping</h5>
+                                <p class="text-muted">Browse our latest products</p>
+                                <a href="{{ url_for('main.products') }}" class="btn btn-primary">
+                                    Shop Now
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-truck fa-3x text-success mb-3"></i>
+                                <h5>Track Orders</h5>
+                                <p class="text-muted">Check your order status</p>
+                                <button class="btn btn-success" disabled>
+                                    No Orders Yet
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-headset fa-3x text-info mb-3"></i>
+                                <h5>Get Support</h5>
+                                <p class="text-muted">Chat with our AI assistant</p>
+                                <button class="btn btn-info" onclick="toggleChat()">
+                                    Start Chat
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Information -->
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-user"></i> Account Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-borderless">
+                            <tr>
+                                <th>Username:</th>
+                                <td>{{ current_user.username }}</td>
+                            </tr>
+                            <tr>
+                                <th>Full Name:</th>
+                                <td>{{ current_user.full_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Role:</th>
+                                <td>
+                                    <span class="badge bg-success">{{ current_user.role|title }}</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="fas fa-bell"></i> Recent Activity</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="text-center text-muted py-4">
+                            <i class="fas fa-inbox fa-2x mb-3"></i>
+                            <p>No recent activity</p>
+                            <small>Start shopping to see your activity here!</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

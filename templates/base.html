@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      {% block title %}bl1tz Store - Premium Electronics & More{% endblock %}
+    </title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --primary-color: #007bff;
+        --secondary-color: #6c757d;
+        --success-color: #28a745;
+        --danger-color: #dc3545;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      }
+
+      .navbar-brand {
+        font-weight: bold;
+        font-size: 1.5rem;
+        color: var(--primary-color) !important;
+      }
+
+      .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 80px 0;
+      }
+
+      .product-card {
+        transition: transform 0.3s ease;
+        border: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      }
+
+      .price {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: var(--success-color);
+      }
+
+      footer {
+        background-color: #343a40;
+        color: white;
+        padding: 40px 0 20px 0;
+      }
+
+      /* Chat Button Styles */
+      .chat-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s ease;
+        z-index: 1000;
+      }
+
+      .chat-button:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+      }
+
+      .chat-button i {
+        color: white;
+        font-size: 24px;
+      }
+
+      /* Chat Window Styles */
+      .chat-window {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        width: 380px;
+        height: 550px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        display: none;
+        flex-direction: column;
+        z-index: 1001;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .chat-window.maximized {
+        width: 90vw;
+        height: 85vh;
+        bottom: 5vh;
+        right: 5vw;
+        left: 5vw;
+        top: 5vh;
+      }
+
+      .chat-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 15px;
+        display: flex;
+        justify-content: between;
+        align-items: center;
+        border-radius: 15px 15px 0 0;
+      }
+
+      .chat-header-info {
+        flex-grow: 1;
+      }
+
+      .chat-header-controls {
+        display: flex;
+        gap: 8px;
+      }
+
+      .chat-control-btn {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 30px;
+        height: 30px;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .chat-control-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f8f9fa;
+      }
+
+      .chat-input-area {
+        padding: 15px;
+        border-top: 1px solid #e9ecef;
+        background: white;
+      }
+
+      .message {
+        margin-bottom: 10px;
+        max-width: 80%;
+      }
+
+      .message.user {
+        background: var(--primary-color);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 18px 18px 4px 18px;
+        margin-left: auto;
+        text-align: right;
+      }
+
+      .message.bot {
+        background: white;
+        color: #333;
+        padding: 8px 12px;
+        border-radius: 18px 18px 18px 4px;
+        border: 1px solid #e9ecef;
+        white-space: pre-line;
+      }
+
+      .chat-buttons {
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .chat-button-item {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 12px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      .chat-button-item:hover {
+        background: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+      }
+
+      .chat-input-special {
+        display: none;
+        padding: 10px;
+        background: #f8f9fa;
+        border-radius: 10px;
+        margin-bottom: 10px;
+      }
+
+      .chat-input-special textarea {
+        width: 100%;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 8px;
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .typing-indicator {
+        display: none;
+        padding: 8px 12px;
+        background: white;
+        border-radius: 18px;
+        border: 1px solid #e9ecef;
+        max-width: 60px;
+      }
+
+      .typing-indicator span {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background-color: #999;
+        margin: 0 1px;
+        animation: typing 1.4s infinite ease-in-out;
+      }
+
+      .typing-indicator span:nth-child(1) {
+        animation-delay: -0.32s;
+      }
+      .typing-indicator span:nth-child(2) {
+        animation-delay: -0.16s;
+      }
+
+      @keyframes typing {
+        0%,
+        80%,
+        100% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        40% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .chat-window {
+          width: calc(100vw - 40px);
+          height: 400px;
+          right: 20px;
+          left: 20px;
+        }
+      }
+    </style>
+    {% block extra_css %}{% endblock %}
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+      <div class="container">
+        <a class="navbar-brand" href="{{ url_for('main.index') }}">
+          <i class="fas fa-bolt"></i> Bl1tz
+        </a>
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarNav"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.products') }}"
+                >Products</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.news') }}">News</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.about') }}">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('main.contact') }}"
+                >Contact</a
+              >
+            </li>
+          </ul>
+          <div class="d-flex align-items-center">
+            <!-- Search Form -->
+            <form
+              class="d-flex me-3"
+              action="{{ url_for('main.search') }}"
+              method="GET"
+              id="navbarSearchForm"
+            >
+              <input
+                class="form-control me-2"
+                type="search"
+                name="q"
+                placeholder="Search products..."
+                style="width: 200px"
+                maxlength="500"
+                id="navbarSearchInput"
+                autocomplete="off"
+              />
+              <button class="btn btn-outline-primary" type="submit">
+                <i class="fas fa-search"></i>
+              </button>
+            </form>
+
+            <ul class="navbar-nav">
+              {% if current_user %}
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="userDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="fas fa-user"></i> {{ current_user.full_name }} {% if
+                  current_user.role == 'admin' %}
+                  <span class="badge bg-danger">Admin</span>
+                  {% endif %}
+                </a>
+                <ul class="dropdown-menu">
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{% if current_user.role == 'admin' %}{{ url_for('admin.dashboard') }}{% else %}{{ url_for('auth.dashboard') }}{% endif %}"
+                    >
+                      <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                  </li>
+                  {% if current_user.role == 'admin' %}
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('admin.users') }}"
+                      ><i class="fas fa-users"></i> Manage Users</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{{ url_for('admin.products') }}"
+                      ><i class="fas fa-box"></i> Manage Products</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      class="dropdown-item"
+                      href="{{ url_for('admin.uploads') }}"
+                      ><i class="fas fa-file"></i> Manage Uploads</a
+                    >
+                  </li>
+                  {% endif %}
+                  <li><hr class="dropdown-divider" /></li>
+                  <li>
+                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}"
+                      ><i class="fas fa-sign-out-alt"></i> Logout</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#"
+                  ><i class="fas fa-shopping-cart"></i>
+                  <span class="badge bg-primary" id="cart-count">0</span></a
+                >
+              </li>
+              {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{{ url_for('auth.login') }}">
+                  <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#"
+                  ><i class="fas fa-shopping-cart"></i>
+                  <span class="badge bg-primary">0</span></a
+                >
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+      <!-- Flash Messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="container mt-3">
+        {% for category, message in messages %}
+        <div
+          class="alert alert-{% if category == 'error' %}danger{% elif category == 'success' %}success{% elif category == 'info' %}info{% else %}primary{% endif %} alert-dismissible fade show"
+          role="alert"
+        >
+          {{ message }}
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %} {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-4">
+            <h5><i class="fas fa-bolt"></i> Bl1tz by Wzrd.</h5>
+            <p>
+              Your one-stop destination for premium electronics, fashion, and
+              lifestyle products.
+            </p>
+          </div>
+          <div class="col-md-2">
+            <h6>Quick Links</h6>
+            <ul class="list-unstyled">
+              <li>
+                <a href="{{ url_for('main.index') }}" class="text-light"
+                  >Home</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('main.products') }}" class="text-light"
+                  >Products</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('main.about') }}" class="text-light"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a href="{{ url_for('main.contact') }}" class="text-light"
+                  >Contact</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h6>Customer Service</h6>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-light">Help Center</a></li>
+              <li><a href="#" class="text-light">Returns</a></li>
+              <li><a href="#" class="text-light">Shipping Info</a></li>
+              <li><a href="#" class="text-light">Track Order</a></li>
+            </ul>
+          </div>
+          <div class="col-md-3">
+            <h6>Connect With Us</h6>
+            <div class="mb-3">
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-facebook-f"></i
+              ></a>
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-twitter"></i
+              ></a>
+              <a href="#" class="text-light me-3"
+                ><i class="fab fa-instagram"></i
+              ></a>
+              <a href="#" class="text-light"
+                ><i class="fab fa-linkedin-in"></i
+              ></a>
+            </div>
+            <p><i class="fas fa-phone"></i> 1-800-BL1TZ-24</p>
+          </div>
+        </div>
+        <hr class="my-4" />
+        <div class="text-center">
+          <p>&copy; 2025 bl1tz by Wzrd. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Chat Button -->
+    <div class="chat-button" onclick="toggleChat()">
+      <i class="fas fa-comments"></i>
+    </div>
+
+    <!-- Chat Window -->
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <strong>bl1tz Assistant</strong>
+          <div><small>🟢 Online now</small></div>
+        </div>
+        <div class="chat-header-controls">
+          <button
+            class="chat-control-btn"
+            onclick="minimizeChat()"
+            title="Minimize"
+          >
+            <i class="fas fa-minus"></i>
+          </button>
+          <button
+            class="chat-control-btn"
+            onclick="toggleMaximizeChat()"
+            id="maximizeBtn"
+            title="Maximize"
+          >
+            <i class="fas fa-expand"></i>
+          </button>
+          <button class="chat-control-btn" onclick="toggleChat()" title="Close">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">
+          Welcome to Bl1tz! 👋 I'm your AI customer support assistant. Let me
+          help you with your questions!
+        </div>
+      </div>
+      <div class="typing-indicator" id="typingIndicator">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="chat-input-area">
+        <div class="chat-input-special" id="specialInput">
+          <textarea
+            id="specialTextarea"
+            placeholder="Enter your message..."
+          ></textarea>
+          <div class="d-flex gap-2 mt-2">
+            <button
+              class="btn btn-primary btn-sm flex-grow-1"
+              onclick="sendSpecialInput()"
+            >
+              Send
+            </button>
+            <button
+              class="btn btn-secondary btn-sm"
+              onclick="cancelSpecialInput()"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+        <div class="input-group" id="normalInput">
+          <input
+            type="text"
+            class="form-control"
+            id="chatInput"
+            placeholder="Type your message..."
+            onkeypress="handleChatKeyPress(event)"
+          />
+          <button class="btn btn-primary" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      let chatOpen = false;
+      let chatMaximized = false;
+      let currentInputAction = null;
+
+      function toggleChat() {
+        const chatWindow = document.getElementById("chatWindow");
+        chatOpen = !chatOpen;
+        chatWindow.style.display = chatOpen ? "flex" : "none";
+
+        if (chatOpen) {
+          // Initialize chat with menu
+          if (document.getElementById("chatMessages").children.length <= 1) {
+            sendChatAction("menu");
+          }
+        } else {
+          // Reset maximize state when closing
+          if (chatMaximized) {
+            toggleMaximizeChat();
+          }
+        }
+      }
+
+      function minimizeChat() {
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.style.display = "none";
+        chatOpen = false;
+      }
+
+      function toggleMaximizeChat() {
+        const chatWindow = document.getElementById("chatWindow");
+        const maximizeBtn = document.getElementById("maximizeBtn");
+
+        chatMaximized = !chatMaximized;
+
+        if (chatMaximized) {
+          chatWindow.classList.add("maximized");
+          maximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
+          maximizeBtn.title = "Restore";
+        } else {
+          chatWindow.classList.remove("maximized");
+          maximizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
+          maximizeBtn.title = "Maximize";
+        }
+      }
+
+      function handleChatKeyPress(event) {
+        if (event.key === "Enter") {
+          sendMessage();
+        }
+      }
+
+      async function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, "user");
+        input.value = "";
+
+        // Show typing indicator
+        showTypingIndicator();
+
+        try {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              action: "general_message",
+              message: message,
+            }),
+          });
+
+          const data = await response.json();
+
+          // Hide typing indicator
+          hideTypingIndicator();
+
+          // Add bot response
+          addBotResponse(data);
+        } catch (error) {
+          hideTypingIndicator();
+          addMessage(
+            "Sorry, I encountered an error. Please try again later.",
+            "bot"
+          );
+        }
+      }
+
+      async function sendChatAction(action, message = "") {
+        showTypingIndicator();
+
+        try {
+          const response = await fetch("/api/chat", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              action: action,
+              message: message,
+            }),
+          });
+
+          const data = await response.json();
+          hideTypingIndicator();
+          addBotResponse(data);
+        } catch (error) {
+          hideTypingIndicator();
+          addMessage(
+            "Sorry, I encountered an error. Please try again later.",
+            "bot"
+          );
+        }
+      }
+
+      function addBotResponse(data) {
+        const messagesDiv = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = "message bot";
+
+        const textSpan = document.createElement("span");
+        textSpan.textContent = data.response;
+        messageDiv.appendChild(textSpan);
+
+        if (data.buttons && data.buttons.length > 0) {
+          const buttonsDiv = document.createElement("div");
+          buttonsDiv.className = "chat-buttons";
+
+          data.buttons.forEach((button) => {
+            const buttonElement = document.createElement("div");
+            buttonElement.className = "chat-button-item";
+            buttonElement.textContent = button.text;
+            buttonElement.onclick = () => {
+              addMessage(button.text, "user");
+              sendChatAction(button.action);
+            };
+            buttonsDiv.appendChild(buttonElement);
+          });
+
+          messageDiv.appendChild(buttonsDiv);
+        }
+
+        // Handle special input mode
+        if (data.input_mode) {
+          currentInputAction = data.input_action;
+          showSpecialInput(data.input_placeholder || "Enter your message...");
+        }
+
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function addMessage(message, sender) {
+        const messagesDiv = document.getElementById("chatMessages");
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}`;
+        messageDiv.textContent = message;
+        messagesDiv.appendChild(messageDiv);
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function showSpecialInput(placeholder) {
+        document.getElementById("normalInput").style.display = "none";
+        document.getElementById("specialInput").style.display = "block";
+        document.getElementById("specialTextarea").placeholder = placeholder;
+        document.getElementById("specialTextarea").focus();
+      }
+
+      function hideSpecialInput() {
+        document.getElementById("normalInput").style.display = "flex";
+        document.getElementById("specialInput").style.display = "none";
+        document.getElementById("specialTextarea").value = "";
+        currentInputAction = null;
+      }
+
+      function sendSpecialInput() {
+        const textarea = document.getElementById("specialTextarea");
+        const message = textarea.value.trim();
+
+        if (!message) return;
+
+        // Add user message
+        addMessage(message, "user");
+
+        // Send the message with the stored action
+        if (currentInputAction) {
+          sendChatAction(currentInputAction, message);
+        }
+
+        // Hide special input
+        hideSpecialInput();
+      }
+
+      function cancelSpecialInput() {
+        hideSpecialInput();
+        sendChatAction("menu");
+      }
+
+      function showTypingIndicator() {
+        document.getElementById("typingIndicator").style.display = "block";
+        const messagesDiv = document.getElementById("chatMessages");
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+
+      function hideTypingIndicator() {
+        document.getElementById("typingIndicator").style.display = "none";
+      }
+
+      // Add to Cart functionality
+      function addToCart(productId, quantity = 1) {
+        fetch("/add_to_cart", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            product_id: productId,
+            quantity: quantity,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              alert(data.message);
+              if (data.cart_count) {
+                document.getElementById("cart-count").textContent =
+                  data.cart_count;
+              }
+            } else {
+              alert(data.message);
+              if (data.redirect) {
+                window.location.href = data.redirect;
+              }
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            alert("Error adding item to cart");
+          });
+      }
+
+      function requireLogin() {
+        if (
+          confirm(
+            "Please log in to add items to your cart. Would you like to go to the login page?"
+          )
+        ) {
+          window.location.href = "/auth/login";
+        }
+      }
+    </script>
+    <script>
+      // Client-side input validation for navbar search
+      document.addEventListener("DOMContentLoaded", function () {
+        const searchInput = document.getElementById("navbarSearchInput");
+        const searchForm = document.getElementById("navbarSearchForm");
+
+        if (searchInput && searchForm) {
+          // Real-time input sanitization feedback
+          searchInput.addEventListener("input", function (e) {
+            const value = e.target.value;
+
+            // Check for potentially dangerous characters
+            const dangerousChars = [
+              "<",
+              ">",
+              '"',
+              "'",
+              "&",
+              "(",
+              ")",
+              "{",
+              "}",
+              "[",
+              "]",
+              "=",
+              ";",
+              ":",
+              "!",
+              "@",
+              "#",
+              "$",
+              "%",
+              "^",
+              "*",
+              "`",
+              "~",
+              "|",
+            ];
+            const hasDangerousChars = dangerousChars.some((char) =>
+              value.includes(char)
+            );
+
+            if (hasDangerousChars) {
+              // Visual feedback for potentially dangerous input
+              searchInput.style.borderColor = "#ffc107";
+              searchInput.style.boxShadow =
+                "0 0 0 0.2rem rgba(255, 193, 7, 0.25)";
+              searchInput.title =
+                "Input contains special characters that will be escaped";
+            } else {
+              // Reset to normal
+              searchInput.style.borderColor = "";
+              searchInput.style.boxShadow = "";
+              searchInput.title = "";
+            }
+          });
+
+          // Form submission validation
+          searchForm.addEventListener("submit", function (e) {
+            const query = searchInput.value.trim();
+
+            if (query.length === 0) {
+              e.preventDefault();
+              alert("Please enter a search term");
+              return;
+            }
+
+            if (query.length > 500) {
+              e.preventDefault();
+              alert(
+                "Search query is too long. Please limit to 500 characters."
+              );
+              return;
+            }
+
+            // Check for obvious XSS patterns
+            const xssPatterns = [
+              /<script/i,
+              /javascript:/i,
+              /on\w+\s*=/i,
+              /eval\s*\(/i,
+              /alert\s*\(/i,
+            ];
+
+            const containsXSS = xssPatterns.some((pattern) =>
+              pattern.test(query)
+            );
+          });
+        }
+      });
+
+      // Enhanced chat input protection (if you want to protect the chat as well)
+      function sanitizeMessage(message) {
+        if (!message) return "";
+
+        // Simple client-side sanitization for chat
+        const dangerousChars = {
+          "<": "\\<",
+          ">": "\\>",
+          '"': '\\"',
+          "'": "\\'",
+          "&": "\\&",
+          "(": "\\(",
+          ")": "\\)",
+          "{": "\\{",
+          "}": "\\}",
+          "[": "\\[",
+          "]": "\\]",
+        };
+
+        let sanitized = message;
+        for (const [char, replacement] of Object.entries(dangerousChars)) {
+          sanitized = sanitized.replace(
+            new RegExp("\\" + char, "g"),
+            replacement
+          );
+        }
+
+        return sanitized;
+      }
+
+      const originalSendMessage = window.sendMessage;
+      if (typeof originalSendMessage === "function") {
+        window.sendMessage = function () {
+          const input = document.getElementById("chatInput");
+          if (input) {
+            const originalValue = input.value;
+            const xssPatterns = [/<script/i, /javascript:/i, /on\w+\s*=/i];
+            const containsXSS = xssPatterns.some((pattern) =>
+              pattern.test(originalValue)
+            );
+
+            if (containsXSS) {
+              console.warn("Potentially unsafe content detected in chat input");
+              input.value = sanitizeMessage(originalValue);
+            }
+          }
+          return originalSendMessage.apply(this, arguments);
+        };
+      }
+    </script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

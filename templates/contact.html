@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - bl1tz Store{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1 class="display-4 fw-bold">Contact Us</h1>
+                <p class="lead">We're here to help you</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-phone fa-2x"></i>
+                            </div>
+                            <h5>Call Us</h5>
+                            <p class="text-muted">1-800-BL1TZ-24<br>Available 24/7</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-envelope fa-2x"></i>
+                            </div>
+                            <h5>Email Us</h5>
+                            <p class="text-muted">support@bl1tz.com<br>We reply within 2 hours</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4 mb-4">
+                        <div class="text-center">
+                            <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                                <i class="fas fa-comments fa-2x"></i>
+                            </div>
+                            <h5>Live Chat</h5>
+                            <p class="text-muted">Click the chat button<br>Instant support</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mt-5">
+                    <div class="card-header">
+                        <h3 class="mb-0">Send us a Message</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if upload_info %}
+                        <div class="alert alert-success">
+                            <h5><i class="fas fa-check-circle"></i> Message sent!</h5>
+                            <!-- <p><strong>Original filename:</strong> {{ upload_info.original_name }}</p>
+                            <p><strong>File ID:</strong> <code>{{ upload_info.view_url.split('id=')[1] }}</code></p>
+                            <p><strong>View file:</strong> <a href="{{ upload_info.view_url }}" target="_blank">{{ upload_info.view_url }}</a></p>
+                            <p><strong>File size:</strong> {{ upload_info.size }} bytes</p> -->
+                            <small class="text-muted">Your message has been sent and will be reviewed by our admin.</small>
+                        </div>
+                        {% endif %}
+                        
+                        <form method="POST" enctype="multipart/form-data">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstName" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="firstName" name="name" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="email" class="form-label">Email Address *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="subject" class="form-label">Subject *</label>
+                                <select class="form-select" id="subject" name="subject" required>
+                                    <option value="">Choose a subject...</option>
+                                    <option value="order">Order Inquiry</option>
+                                    <option value="product">Product Question</option>
+                                    <option value="shipping">Shipping & Delivery</option>
+                                    <option value="return">Returns & Exchanges</option>
+                                    <option value="technical">Technical Support</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Message *</label>
+                                <textarea class="form-control" id="message" name="message" rows="5" required 
+                                          placeholder="Please describe your question or concern in detail..."></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="attachment" class="form-label">Attachment (PDF only)</label>
+                                <input type="file" class="form-control" id="attachment" name="attachment" accept=".pdf">
+                                <div class="form-text">
+                                    <i class="fas fa-info-circle"></i> 
+                                    Optional: Upload a PDF file (max 16MB). Please DON'T upload sensitive file there.
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="newsletter">
+                                <label class="form-check-label" for="newsletter">
+                                    Subscribe to our newsletter for updates and exclusive offers
+                                </label>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane"></i> Send Message
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <h3 class="mb-4">Frequently Asked Questions</h3>
+                    
+                    <div class="accordion" id="faqAccordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq1">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">
+                                    How long does shipping take?
+                                </button>
+                            </h2>
+                            <div id="collapse1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer free 2-day shipping on orders over $50. Standard shipping takes 3-5 business days. Express shipping (1-2 business days) is available for an additional fee.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq2">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse2">
+                                    What is your return policy?
+                                </button>
+                            </h2>
+                            <div id="collapse2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    We offer a 30-day return policy for most items. Products must be in original condition with all packaging. Defective items can be returned for a full refund or exchange.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq3">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse3">
+                                    Do you offer international shipping?
+                                </button>
+                            </h2>
+                            <div id="collapse3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Currently, we ship within the United States and Canada. We're working on expanding our international shipping options and will update our customers when available.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="faq4">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse4">
+                                    How can I track my order?
+                                </button>
+                            </h2>
+                            <div id="collapse4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                                <div class="accordion-body">
+                                    Once your order ships, you'll receive a tracking number via email. You can also check your order status by contacting our customer service team or using our AI chat assistant.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

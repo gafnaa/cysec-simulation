@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Manage News - Admin Dashboard{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="display-5 fw-bold">
+                        <i class="fas fa-newspaper"></i> Manage News
+                    </h1>
+                    <a href="{{ url_for('admin.dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">All News Articles ({{ news|length }})</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Title</th>
+                                        <th>Author</th>
+                                        <th>Featured</th>
+                                        <th>Published</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for article in news %}
+                                    <tr>
+                                        <td>{{ article.id }}</td>
+                                        <td>
+                                            {{ article.title[:50] }}{% if article.title|length > 50 %}...{% endif %}
+                                        </td>
+                                        <td>{{ article.author }}</td>
+                                        <td>
+                                            {% if article.featured %}
+                                            <span class="badge bg-warning">Featured</span>
+                                            {% else %}
+                                            <span class="badge bg-secondary">Normal</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ article.published_at.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary" disabled>
+                                                Edit
+                                            </button>
+                                            <button class="btn btn-sm btn-outline-warning" disabled>
+                                                Feature
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

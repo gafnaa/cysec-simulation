@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Welcome to bl1tz Store</h1>
+                <p class="lead mb-4">Discover amazing deals on premium electronics, fashion, and lifestyle products. Fast shipping, great prices, and exceptional customer service.</p>
+                <div class="d-flex gap-3 mb-4">
+                    <a href="{{ url_for('main.products') }}" class="btn btn-light btn-lg">Shop Now</a>
+                    <a href="#featured" class="btn btn-outline-light btn-lg">Learn More</a>
+                </div>
+                
+                <!-- Homepage Search Bar -->
+                <div class="card bg-white bg-opacity-90">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">Quick Product Search</h5>
+                        <form action="{{ url_for('main.search') }}" method="GET" class="d-flex">
+                            <input type="text" name="q" class="form-control me-2" placeholder="Search for products...">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-search"></i> Search
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-bolt" style="font-size: 200px; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products -->
+<section id="featured" class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Featured Products</h2>
+                <p class="lead text-muted">Handpicked items just for you</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for product in products %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="card product-card h-100">
+                    <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 200px;">
+                        <i class="fas fa-laptop text-primary" style="font-size: 60px;"></i>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">{{ product.name }}</h5>
+                        <p class="card-text text-muted flex-grow-1">{{ product.description[:80] }}...</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                            <span class="badge bg-secondary">{{ product.category }}</span>
+                        </div>
+                        {% if current_user %}
+                        <button class="btn btn-primary mt-3">Add to Cart</button>
+                        {% else %}
+                        <button class="btn btn-primary mt-3" onclick="requireLogin()">Add to Cart</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.products') }}" class="btn btn-outline-primary btn-lg">View All Products</a>
+        </div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2 class="display-5 fw-bold">Why Choose bl1tz?</h2>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-shipping-fast fa-2x"></i>
+                    </div>
+                    <h4>Fast Shipping</h4>
+                    <p class="text-muted">Free 2-day shipping on orders over $50</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h4>Secure Shopping</h4>
+                    <p class="text-muted">Your data is protected with SSL encryption</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-undo-alt fa-2x"></i>
+                    </div>
+                    <h4>Easy Returns</h4>
+                    <p class="text-muted">30-day hassle-free return policy</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="text-center">
+                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <i class="fas fa-headset fa-2x"></i>
+                    </div>
+                    <h4>24/7 Support</h4>
+                    <p class="text-muted">Get help anytime with our AI assistant</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Latest News -->
+<section class="py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h2 class="display-5 fw-bold mb-3">Latest News</h2>
+                <p class="lead text-muted">Stay updated with bl1tz Store</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            {% for article in news %}
+            <div class="col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ article.title }}</h5>
+                        <p class="card-text">{{ article.content[:150] }}...</p>
+                        <small class="text-muted">By {{ article.author }} • {{ article.published_at.strftime('%B %d, %Y') }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter -->
+<section class="py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 mx-auto text-center">
+                <h2 class="mb-4">Stay Connected</h2>
+                <p class="lead mb-4">Subscribe to our newsletter for exclusive deals and updates</p>
+                <div class="row">
+                    <div class="col-md-8 mx-auto">
+                        <div class="input-group">
+                            <input type="email" class="form-control" placeholder="Enter your email">
+                            <button class="btn btn-light" type="button">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
