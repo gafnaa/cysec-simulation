@@ -39,14 +39,48 @@ class Product:
     
     @staticmethod
     def create(name, description, price, category, stock, image_url=None):
-        query = """
-            INSERT INTO products (name, description, price, category, stock, image_url, created_at)
-            VALUES (%s, %s, %s, %s, %s, %s, NOW())
-            RETURNING id
-        """
-        params = (name, description, price, category, stock, image_url)
-        result = execute_query(query, params, fetch_one=True)
-        return result['id'] if result else None
+        try:
+            print(f"[DEBUG] Creating product with params:")
+            print(f"  name: {name}")
+            print(f"  description: {description[:50]}...")
+            print(f"  price: {price}")
+            print(f"  category: {category}")
+            print(f"  stock: {stock}")
+            print(f"  image_url: {image_url}")
+
+            # Validate data types
+            if not isinstance(price, (int, float)):
+                raise ValueError(f"Price must be a number, got {type(price)}")
+            if not isinstance(stock, int):
+                raise ValueError(f"Stock must be an integer, got {type(stock)}")
+
+            query = """
+                INSERT INTO products (name, description, price, category, stock, image_url)
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            params = (name, description, price, category, stock, image_url)
+            print("[DEBUG] Executing INSERT query")
+            result = execute_query(query, params)
+            print(f"[DEBUG] Insert result (affected rows): {result}")
+            
+            if result and result > 0:
+                print("[DEBUG] Insert successful, getting last insert ID")
+                query = "SELECT LAST_INSERT_ID() as id"
+                id_result = execute_query(query, fetch_one=True)
+                print(f"[DEBUG] Last insert ID result: {id_result}")
+                if id_result and 'id' in id_result:
+                    return id_result['id']
+                print("[ERROR] Could not get last insert ID")
+                return None
+            print("[ERROR] Insert failed - no rows affected")
+            return None
+        except Exception as e:
+            print(f"[ERROR] Error in create product: {str(e)}")
+            print(f"[ERROR] Error type: {type(e)}")
+            import traceback
+            print("[ERROR] Traceback:")
+            print(traceback.format_exc())
+            raise
 
     @staticmethod
     def update(product_id, name, description, price, category, stock, image_url=None):
@@ -55,17 +89,16 @@ class Product:
             SET name = %s, description = %s, price = %s, category = %s,
                 stock = %s, image_url = %s, updated_at = NOW()
             WHERE id = %s
-            RETURNING id
         """
         params = (name, description, price, category, stock, image_url, product_id)
-        result = execute_query(query, params, fetch_one=True)
-        return result['id'] if result else None
+        result = execute_query(query, params)
+        return product_id if result and result > 0 else None
 
     @staticmethod
     def delete(product_id):
-        query = "DELETE FROM products WHERE id = %s RETURNING id"
-        result = execute_query(query, (product_id,), fetch_one=True)
-        return result['id'] if result else None
+        query = "DELETE FROM products WHERE id = %s"
+        result = execute_query(query, (product_id,))
+        return product_id if result and result > 0 else None
 
     @staticmethod
     def create_category(name):

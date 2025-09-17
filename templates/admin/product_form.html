@@ -1,6 +1,6 @@
-{% extends "admin/base.html" %}
+{% extends "base.html" %}
 
-{% block title %}{{ 'Edit' if product else 'New' }} Product - Admin{% endblock %}
+{% block title %}{{ 'Edit' if product else 'New' }} Product - Admin Dashboard{% endblock %}
 
 {% block content %}
 <div class="container-fluid py-4">
@@ -22,7 +22,7 @@
                         {% endif %}
                     {% endwith %}
 
-                    <form method="POST" class="needs-validation" novalidate>
+                    <form method="POST" class="needs-validation" enctype="multipart/form-data" novalidate>
                         <div class="mb-3">
                             <label for="name" class="form-label">Product Name</label>
                             <input type="text" 
@@ -99,13 +99,21 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="image_url" class="form-label">Image URL (Optional)</label>
-                            <input type="url" 
+                            <label for="image" class="form-label">Product Image</label>
+                            <input type="file" 
                                    class="form-control" 
-                                   id="image_url" 
-                                   name="image_url" 
-                                   value="{{ product.image_url if product else '' }}">
-                            <div class="form-text">Enter a URL for the product image or leave blank to use a default icon.</div>
+                                   id="image" 
+                                   name="image"
+                                   accept="image/*">
+                            <div class="form-text">Upload a product image (JPG, PNG, or GIF)</div>
+                            {% if product and product.image_url %}
+                            <div class="mt-2">
+                                <label class="form-label">Current Image:</label>
+                                <div>
+                                    <img src="{{ product.image_url }}" alt="{{ product.name }}" class="img-thumbnail" style="max-height: 150px;">
+                                </div>
+                            </div>
+                            {% endif %}
                         </div>
 
                         <div class="d-flex justify-content-between">

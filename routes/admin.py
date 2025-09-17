@@ -6,6 +6,7 @@ from models.user import User
 from models.product import Product
 from utils.crypto import oracle
 from utils.form_validation import validate_product_form, validate_category_form
+from utils.file_handler import save_uploaded_file, delete_file
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -78,14 +79,138 @@ def users():
 @admin_bp.route('/products')
 @admin_required
 def products():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM products ORDER BY created_at DESC")
-    products = cursor.fetchall()
-    cursor.close()
-    conn.close()
+    products = Product.get_all()
+    categories = Product.get_categories()
+    return render_template('admin/products.html', products=products, categories=categories)
 
-    return render_template('admin/products.html', products=products)
+@admin_bp.route('/products/new', methods=['GET', 'POST'])
+@admin_required
+@validate_product_form
+def new_product():
+    if request.method == 'POST':
+        print("[DEBUG] Received POST request for new product")
+        try:
+            name = request.form['name']
+            description = request.form['description']
+            price = float(request.form['price'])
+            category = request.form['category']
+            stock = int(request.form['stock'])
+            
+            print(f"[DEBUG] Form data: name={name}, price={price}, category={category}, stock={stock}")
+            
+            # Handle image upload
+            image_url = None
+            if 'image' in request.files:
+                file = request.files['image']
+                print(f"[DEBUG] Image file received: {file.filename if file else 'No file'}")
+                if file.filename:
+                    image_url = save_uploaded_file(file)
+                    print(f"[DEBUG] Image saved: {image_url}")
+                    if not image_url:
+                        print("[ERROR] Invalid file type")
+                        flash('Invalid file type. Please upload a JPG, PNG, or GIF file.', 'error')
+                        return redirect(url_for('admin.new_product'))
+
+            try:
+                print("[DEBUG] Attempting to create product in database")
+                product_id = Product.create(name, description, price, category, stock, image_url)
+                print(f"[DEBUG] Product creation result: {product_id}")
+                
+                if product_id:
+                    print("[DEBUG] Product created successfully")
+                    flash('Product created successfully!', 'success')
+                    return redirect(url_for('admin.products'))
+                else:
+                    print("[ERROR] Failed to create product in database")
+                    if image_url:
+                        print(f"[DEBUG] Deleting uploaded image: {image_url}")
+                        delete_file(image_url)
+                    flash('Failed to create product. Database operation failed.', 'error')
+            except Exception as e:
+                print(f"[ERROR] Exception during product creation: {str(e)}")
+                if image_url:
+                    print(f"[DEBUG] Deleting uploaded image due to error: {image_url}")
+                    delete_file(image_url)
+                flash(f'Error creating product: {str(e)}', 'error')
+                flash(f'Failed to create product. Error: {str(e)}', 'error')
+        except ValueError as e:
+            flash(str(e), 'error')
+            return redirect(url_for('admin.new_product'))
+
+    categories = Product.get_categories()
+    return render_template('admin/product_form.html', categories=categories, product=None)
+
+@admin_bp.route('/products/edit/<int:product_id>', methods=['GET', 'POST'])
+@admin_required
+@validate_product_form
+def edit_product(product_id):
+    product = Product.get_by_id(product_id)
+    if not product:
+        flash('Product not found.', 'error')
+        return redirect(url_for('admin.products'))
+
+    if request.method == 'POST':
+        try:
+            name = request.form['name']
+            description = request.form['description']
+            price = float(request.form['price'])
+            category = request.form['category']
+            stock = int(request.form['stock'])
+            
+            # Handle image upload
+            image_url = product['image_url']  # Keep existing image by default
+            if 'image' in request.files:
+                file = request.files['image']
+                if file.filename:
+                    new_image_url = save_uploaded_file(file)
+                    if not new_image_url:
+                        flash('Invalid file type. Please upload a JPG, PNG, or GIF file.', 'error')
+                        return redirect(url_for('admin.edit_product', product_id=product_id))
+                    
+                    # Delete old image if it exists
+                    if image_url:
+                        delete_file(image_url)
+                    image_url = new_image_url
+
+            try:
+                updated_id = Product.update(product_id, name, description, price, category, stock, image_url)
+                if updated_id:
+                    flash('Product updated successfully!', 'success')
+                    return redirect(url_for('admin.products'))
+                else:
+                    if image_url != product['image_url']:  # If we uploaded a new image but update failed
+                        delete_file(image_url)
+                    flash('Failed to update product. Database operation failed.', 'error')
+            except Exception as e:
+                if image_url != product['image_url']:
+                    delete_file(image_url)
+                print(f"Error updating product: {str(e)}")
+                flash(f'Failed to update product. Error: {str(e)}', 'error')
+        except ValueError as e:
+            flash(str(e), 'error')
+            return redirect(url_for('admin.edit_product', product_id=product_id))
+
+    categories = Product.get_categories()
+    return render_template('admin/product_form.html', categories=categories, product=product)
+
+@admin_bp.route('/products/delete/<int:product_id>', methods=['POST'])
+@admin_required
+def delete_product(product_id):
+    # Get product info first
+    product = Product.get_by_id(product_id)
+    if not product:
+        flash('Product not found.', 'error')
+        return redirect(url_for('admin.products'))
+    
+    # Delete product from database
+    if Product.delete(product_id):
+        # If successful, delete associated image file
+        if product['image_url']:
+            delete_file(product['image_url'])
+        flash('Product deleted successfully!', 'success')
+    else:
+        flash('Failed to delete product.', 'error')
+    return redirect(url_for('admin.products'))
 
 @admin_bp.route('/news')
 @admin_required

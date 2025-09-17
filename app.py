@@ -28,9 +28,26 @@ def register_context_processors(app):
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.debug = True  # Enable debug mode
     register_template_filters(app)
     register_context_processors(app)
+    
+    # Configure logging
+    import logging
+    logging.basicConfig(level=logging.DEBUG)
+    app.logger.setLevel(logging.DEBUG)
+    
+    # Create upload directories
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    os.makedirs('uploads/products', exist_ok=True)
+    
+    # Serve files from uploads directory
+    from flask import send_from_directory
+    
+    @app.route('/uploads/products/<path:filename>')
+    def serve_product_image(filename):
+        directory = os.path.join(app.root_path, 'uploads/products')
+        return send_from_directory(directory, filename)
     
     from routes.main import main_bp
     from routes.auth import auth_bp
