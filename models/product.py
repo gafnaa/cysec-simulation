@@ -36,3 +36,51 @@ class Product:
     def get_by_category(category):
         query = "SELECT * FROM products WHERE category = %s"
         return execute_query(query, (category,), fetch=True)
+    
+    @staticmethod
+    def create(name, description, price, category, stock, image_url=None):
+        query = """
+            INSERT INTO products (name, description, price, category, stock, image_url, created_at)
+            VALUES (%s, %s, %s, %s, %s, %s, NOW())
+            RETURNING id
+        """
+        params = (name, description, price, category, stock, image_url)
+        result = execute_query(query, params, fetch_one=True)
+        return result['id'] if result else None
+
+    @staticmethod
+    def update(product_id, name, description, price, category, stock, image_url=None):
+        query = """
+            UPDATE products
+            SET name = %s, description = %s, price = %s, category = %s,
+                stock = %s, image_url = %s, updated_at = NOW()
+            WHERE id = %s
+            RETURNING id
+        """
+        params = (name, description, price, category, stock, image_url, product_id)
+        result = execute_query(query, params, fetch_one=True)
+        return result['id'] if result else None
+
+    @staticmethod
+    def delete(product_id):
+        query = "DELETE FROM products WHERE id = %s RETURNING id"
+        result = execute_query(query, (product_id,), fetch_one=True)
+        return result['id'] if result else None
+
+    @staticmethod
+    def create_category(name):
+        query = "INSERT INTO categories (name) VALUES (%s) RETURNING id"
+        result = execute_query(query, (name,), fetch_one=True)
+        return result['id'] if result else None
+
+    @staticmethod
+    def update_category(category_id, name):
+        query = "UPDATE categories SET name = %s WHERE id = %s RETURNING id"
+        result = execute_query(query, (name, category_id), fetch_one=True)
+        return result['id'] if result else None
+
+    @staticmethod
+    def delete_category(category_id):
+        query = "DELETE FROM categories WHERE id = %s RETURNING id"
+        result = execute_query(query, (category_id,), fetch_one=True)
+        return result['id'] if result else None

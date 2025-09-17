@@ -31,15 +31,8 @@ def index():
 
 @main_bp.route('/products')
 def products():
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-    cursor.execute("SELECT * FROM products ORDER BY created_at DESC")
-    products = cursor.fetchall()
-    cursor.execute("SELECT * FROM categories ORDER BY name")
-    categories = cursor.fetchall()
-    cursor.close()
-    conn.close()
-
+    products = Product.get_all()
+    categories = Product.get_categories()
     return render_template('products.html', products=products, categories=categories)
 
 @main_bp.route('/search')
