@@ -1,8 +1,8 @@
 # php/Dockerfile
 FROM php:8.2-apache
 
-# Enable common Apache modules (rewrite, headers)
-RUN a2enmod rewrite headers
+# Enable common Apache modules (rewrite, headers) + proxy modules
+RUN a2enmod rewrite headers proxy proxy_http
 
 # Copy custom apache site config
 COPY 000-default.conf /etc/apache2/sites-available/000-default.conf

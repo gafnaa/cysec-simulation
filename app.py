@@ -26,7 +26,7 @@ def register_context_processors(app):
         }
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder='static', static_url_path='/static')
     app.config.from_object(Config)
     app.debug = True  # Enable debug mode
     register_template_filters(app)
