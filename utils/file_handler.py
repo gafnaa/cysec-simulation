@@ -7,10 +7,6 @@ ALLOWED_EXTENSIONS_SUBSTRINGS = {'.png', '.jpg', '.jpeg', '.gif'}
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'uploads/products')
 
 def allowed_file(filename):
-    """
-    This check is WEAK and can be bypassed.
-    It allows a file like 'shell.php.jpg' because it contains '.jpg'.
-    """
     if not filename:
         return False
     return any(ext in filename.lower() for ext in ALLOWED_EXTENSIONS_SUBSTRINGS)
@@ -32,7 +28,11 @@ def save_uploaded_file(file):
 
 def delete_file(file_url):
     if file_url and file_url.startswith('/uploads/products/'):
-        file_path = file_url.lstrip('/')
+        # Extract the unique filename from the URL
+        unique_filename = file_url.split('/')[-1]
+        # Construct the absolute file path using UPLOAD_FOLDER
+        file_path = os.path.join(UPLOAD_FOLDER, unique_filename)
+        
         if os.path.exists(file_path):
             os.remove(file_path)
             return True

@@ -1,161 +1,212 @@
-{% extends "base.html" %}
-
-{% block title %}Products - bl1tz Store{% endblock %}
-
+{% extends "base.html" %} {% block title %}Products - bl1tz Store{% endblock %}
 {% block content %}
 <!-- Page Header -->
 <section class="py-5 bg-primary text-white">
-    <div class="container">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h1 class="display-4 fw-bold">Our Products</h1>
-                <p class="lead">Discover amazing deals on premium items</p>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 text-center">
+        <h1 class="display-4 fw-bold">Our Products</h1>
+        <p class="lead">Discover amazing deals on premium items</p>
+      </div>
     </div>
+  </div>
 </section>
 
 <!-- Products Section -->
 <section class="py-5">
-    <div class="container">
-        <div class="row">
-            <!-- Sidebar -->
-            <div class="col-lg-3 mb-4">
-                <!-- Search Widget -->
-                <div class="card mb-4">
-                    <div class="card-header">
-                        <h5 class="mb-0"><i class="fas fa-search"></i> Product Search</h5>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ url_for('main.search') }}" method="GET">
-                            <div class="mb-3">
-                                <input type="text" name="q" class="form-control" placeholder="Search products...">
-                            </div>
-                            <div class="mb-3">
-                                <select name="category" class="form-select">
-                                    <option value="">All Categories</option>
-                                    {% for category in categories %}
-                                    <option value="{{ category.name }}">{{ category.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100">
-                                <i class="fas fa-search"></i> Search
-                            </button>
-                        </form>
-                    </div>
-                </div>
-                
-                <div class="card">
-                    <div class="card-header">
-                        <h5 class="mb-0">Categories</h5>
-                    </div>
-                    <div class="card-body">
-                        <ul class="list-unstyled">
-                            <li class="mb-2">
-                                <a href="#" class="text-decoration-none">All Products</a>
-                            </li>
-                            {% for category in categories %}
-                            <li class="mb-2">
-                                <a href="#" class="text-decoration-none">{{ category.name }}</a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-                
-                <div class="card mt-4">
-                    <div class="card-header">
-                        <h5 class="mb-0">Price Range</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-3">
-                            <label class="form-label">Min Price</label>
-                            <input type="range" class="form-range" min="0" max="2000" value="0">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Max Price</label>
-                            <input type="range" class="form-range" min="0" max="2000" value="2000">
-                        </div>
-                        <button class="btn btn-primary btn-sm">Apply Filter</button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Products Grid -->
-            <div class="col-lg-9">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <p class="text-muted">Showing {{ products|length }} products</p>
-                    <select class="form-select w-auto">
-                        <option>Sort by: Featured</option>
-                        <option>Price: Low to High</option>
-                        <option>Price: High to Low</option>
-                        <option>Name: A to Z</option>
-                        <option>Newest First</option>
-                    </select>
-                </div>
-                
-                <div class="row">
-                    {% for product in products %}
-                    <div class="col-lg-4 col-md-6 mb-4">
-                        <div class="card product-card h-100">
-                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center position-relative" style="height: 250px;">
-                                {% if product.category == 'Electronics' %}
-                                    <i class="fas fa-laptop text-primary" style="font-size: 80px;"></i>
-                                {% elif product.category == 'Fashion' %}
-                                    <i class="fas fa-tshirt text-success" style="font-size: 80px;"></i>
-                                {% elif product.category == 'Home & Garden' %}
-                                    <i class="fas fa-home text-warning" style="font-size: 80px;"></i>
-                                {% elif product.category == 'Sports' %}
-                                    <i class="fas fa-running text-danger" style="font-size: 80px;"></i>
-                                {% elif product.category == 'Books' %}
-                                    <i class="fas fa-book text-info" style="font-size: 80px;"></i>
-                                {% else %}
-                                    <i class="fas fa-box text-secondary" style="font-size: 80px;"></i>
-                                {% endif %}
-                                
-                                {% if product.stock < 10 %}
-                                <span class="badge bg-danger position-absolute top-0 start-0 m-2">Low Stock</span>
-                                {% endif %}
-                            </div>
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title">{{ product.name }}</h5>
-                                <p class="card-text text-muted flex-grow-1">{{ product.description }}</p>
-                                <div class="mb-2">
-                                    <span class="badge bg-secondary">{{ product.category }}</span>
-                                    <span class="badge bg-info">{{ product.stock }} in stock</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="price">${{ "%.2f"|format(product.price) }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
-                
-                <!-- Pagination -->
-                <nav aria-label="Products pagination">
-                    <ul class="pagination justify-content-center">
-                        <li class="page-item disabled">
-                            <a class="page-link" href="#" tabindex="-1">Previous</a>
-                        </li>
-                        <li class="page-item active">
-                            <a class="page-link" href="#">1</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">2</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">Next</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
+  <div class="container">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-lg-3 mb-4">
+        <!-- Search Widget -->
+        <div class="card mb-4">
+          <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-search"></i> Product Search</h5>
+          </div>
+          <div class="card-body">
+            <form action="{{ url_for('main.search') }}" method="GET">
+              <div class="mb-3">
+                <input
+                  type="text"
+                  name="q"
+                  class="form-control"
+                  placeholder="Search products..."
+                />
+              </div>
+              <div class="mb-3">
+                <select name="category" class="form-select">
+                  <option value="">All Categories</option>
+                  {% for category in categories %}
+                  <option value="{{ category.name }}">
+                    {{ category.name }}
+                  </option>
+                  {% endfor %}
+                </select>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </form>
+          </div>
         </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h5 class="mb-0">Categories</h5>
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('main.search') }}"
+                  class="text-decoration-none"
+                  >All Products</a
+                >
+              </li>
+              {% for category in categories %}
+              <li class="mb-2">
+                <a
+                  href="{{ url_for('main.search', category=category.name) }}"
+                  class="text-decoration-none"
+                  >{{ category.name }}</a
+                >
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-header">
+            <h5 class="mb-0">Price Range</h5>
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label class="form-label">Min Price</label>
+              <input
+                type="range"
+                class="form-range"
+                min="0"
+                max="2000"
+                value="0"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Max Price</label>
+              <input
+                type="range"
+                class="form-range"
+                min="0"
+                max="2000"
+                value="2000"
+              />
+            </div>
+            <button class="btn btn-primary btn-sm">Apply Filter</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Products Grid -->
+      <div class="col-lg-9">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <p class="text-muted">Showing {{ products|length }} products</p>
+          <select class="form-select w-auto">
+            <option>Sort by: Featured</option>
+            <option>Price: Low to High</option>
+            <option>Price: High to Low</option>
+            <option>Name: A to Z</option>
+            <option>Newest First</option>
+          </select>
+        </div>
+
+        <div class="row">
+          {% for product in products %}
+          <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card product-card h-100">
+              <div
+                class="card-img-top bg-light d-flex align-items-center justify-content-center position-relative"
+                style="height: 250px; overflow: hidden"
+              >
+                {% if product.image_url %}
+                <img
+                  src="{{ product.image_url }}"
+                  alt="{{ product.name }}"
+                  class="img-fluid"
+                  style="object-fit: cover; height: 100%; width: 100%"
+                />
+                {% else %} {% if product.category == 'Electronics' %}
+                <i
+                  class="fas fa-laptop text-primary"
+                  style="font-size: 80px"
+                ></i>
+                {% elif product.category == 'Fashion' %}
+                <i
+                  class="fas fa-tshirt text-success"
+                  style="font-size: 80px"
+                ></i>
+                {% elif product.category == 'Home & Garden' %}
+                <i class="fas fa-home text-warning" style="font-size: 80px"></i>
+                {% elif product.category == 'Sports' %}
+                <i
+                  class="fas fa-running text-danger"
+                  style="font-size: 80px"
+                ></i>
+                {% elif product.category == 'Books' %}
+                <i class="fas fa-book text-info" style="font-size: 80px"></i>
+                {% else %}
+                <i
+                  class="fas fa-box text-secondary"
+                  style="font-size: 80px"
+                ></i>
+                {% endif %} {% endif %} {% if product.stock < 10 %}
+                <span
+                  class="badge bg-danger position-absolute top-0 start-0 m-2"
+                  >Low Stock</span
+                >
+                {% endif %}
+              </div>
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ product.name }}</h5>
+                <p class="card-text text-muted flex-grow-1">
+                  {{ product.description }}
+                </p>
+                <div class="mb-2">
+                  <span class="badge bg-secondary">{{ product.category }}</span>
+                  <span class="badge bg-info"
+                    >{{ product.stock }} in stock</span
+                  >
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                  <span class="price">${{ "%.2f"|format(product.price) }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <nav aria-label="Products pagination">
+          <ul class="pagination justify-content-center">
+            <li class="page-item disabled">
+              <a class="page-link" href="#" tabindex="-1">Previous</a>
+            </li>
+            <li class="page-item active">
+              <a class="page-link" href="#">1</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">2</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">3</a>
+            </li>
+            <li class="page-item">
+              <a class="page-link" href="#">Next</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
+  </div>
 </section>
 {% endblock %}

@@ -39,6 +39,11 @@ def products():
 def search():
     query = request.args.get('q', '')
     category = request.args.get('category', '')
+    products = []  # Initialize products to an empty list
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
     if query:
         if xss_protection.is_potentially_malicious(query):
             logging.warning(f"Potentially malicious search attempt: {query} from IP: {request.remote_addr}")
@@ -52,25 +57,14 @@ def search():
         else:
             safe_category = category
 
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-
         if safe_category and query:
             cursor.execute("SELECT * FROM products WHERE (name LIKE %s OR description LIKE %s) AND category = %s",
                            (f'%{query}%', f'%{query}%', safe_category))
         elif query:
             cursor.execute("SELECT * FROM products WHERE name LIKE %s OR description LIKE %s",
                            (f'%{query}%', f'%{query}%'))
-        else:
-            products = []
-        cursor.execute("SELECT * FROM categories ORDER BY name")
-        categories = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return render_template('search.html', products=products, categories=categories,
-                               query=query, category=category)
-
-    products = cursor.fetchall()
+        
+        products = cursor.fetchall() # Fetch products here
 
     cursor.execute("SELECT * FROM categories ORDER BY name")
     categories = cursor.fetchall()
