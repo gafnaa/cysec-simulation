@@ -1,8 +1,10 @@
-# bl1tz Store - Premium Electronics & More
+# bl1tz Store
 
 ## Description
 
-This project is an e-commerce platform named "bl1tz Store" that offers premium electronics, fashion, and lifestyle products. It's built using Flask for the backend and Jinja2 for templating, with a MySQL database. The application is containerized using Docker and Docker Compose for easy setup and deployment.
+This project is an e-commerce platform named "bl1tz Store" that offers premium electronics, fashion, and lifestyle products. It's built using Flask for the backend and Jinja2 for templating, with a MySQL database.
+
+**This project is designed as a vulnerable web application for simulating and demonstrating Server-Side Template Injection (SSTI) and Remote Code Execution (RCE) attacks. It serves as an educational tool for understanding these vulnerabilities in a controlled environment.**
 
 ## Features
 
@@ -17,18 +19,16 @@ This project is an e-commerce platform named "bl1tz Store" that offers premium e
 Before you begin, ensure you have the following installed on your system:
 
 - [Docker](https://docs.docker.com/get-docker/)
-- [Docker Compose](https://docs.docker.com/compose/install/) (usually comes with Docker Desktop)
+- [Python Library](/requirements.txt)
 
 ## Getting Started
 
 1.  **Clone the repository:**
 
     ```bash
-    git clone https://github.com/your-username/bl1tz-store.git
-    cd bl1tz-store/infra
+    git clone https://github.com/gafnaa/bl1tz-store.git
+    cd bl1tz-store
     ```
-
-    (Note: Replace `https://github.com/your-username/bl1tz-store.git` with the actual repository URL if it's different.)
 
 2.  **Build and run the Docker containers:**
     ```bash
@@ -40,8 +40,6 @@ Before you begin, ensure you have the following installed on your system:
     - Start the Flask application container, which will wait for the database to be ready before starting.
 
 ## Running the Application
-
-Once the containers are up and running, the Flask application will be accessible at `http://127.0.0.1:5000` or `http://localhost:5000`.
 
 You should see output similar to this in your terminal:
 
@@ -56,4 +54,14 @@ app-1  |  * Running on http://172.18.0.3:5000
 app-1  | Press CTRL+C to quit
 ```
 
-Open your web browser and navigate to `http://localhost:5000` to access the application.
+Once the containers are up and running, the application will be accessible at
+
+```
+http://127.0.0.1:5000
+```
+
+or
+
+```
+http://localhost:5000
+```
