@@ -76,6 +76,15 @@ def users():
 
     return render_template('admin/users.html', users=users)
 
+@admin_bp.route('/users/<int:user_id>')
+@admin_required
+def view_user(user_id):
+    user = User.find_by_id(user_id)
+    if not user:
+        flash('User not found.', 'error')
+        return redirect(url_for('admin.users'))
+    return render_template('admin/user_detail.html', user=user)
+
 @admin_bp.route('/products')
 @admin_required
 def products():
